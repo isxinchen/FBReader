@@ -20,7 +20,7 @@
 #if QT5
   #include <QGuiApplication>
   #if SAILFISH
-    #include <sailfishapp/sailfishapp.h>
+    //#include <sailfishapp/sailfishapp.h>
   #endif
 #else
   #include <QApplication>
@@ -60,7 +60,8 @@ void initLibrary() {
 
 void ZLQmlLibraryImplementation::init(int &argc, char **&argv) {
 #if SAILFISH
-    SailfishApp::application(argc, argv);
+    //SailfishApp::application(argc, argv);
+    new QGuiApplication(argc, argv);
 #elif QT5
     new QGuiApplication(argc, argv);
 #else

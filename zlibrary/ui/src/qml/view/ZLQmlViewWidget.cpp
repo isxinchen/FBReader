@@ -31,7 +31,7 @@
     #include <QQmlEngine>
 #endif
 #if SAILFISH
-    #include <sailfishapp/sailfishapp.h>
+//    #include <sailfishapp/sailfishapp.h>
 #endif
 #include <QPainter>
 #include <QPixmap>
@@ -302,7 +302,8 @@ ZLQmlViewObject::ZLQmlViewObject(ZLApplication *application)
 	myVerticalInfo = new ZLQmlScrollBarInfo(this);
 	myHorizontalInfo = new ZLQmlScrollBarInfo(this);
 #if SAILFISH
-	myWidget = SailfishApp::createView();
+	//myWidget = SailfishApp::createView();
+    myWidget = new QQuickView;
 #elif QT5
     myWidget = new QQuickView;
 #else
