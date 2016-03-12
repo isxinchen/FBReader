@@ -311,6 +311,9 @@ ZLQmlViewObject::ZLQmlViewObject(ZLApplication *application)
 #endif
     myWidget->engine()->setNetworkAccessManagerFactory(new ZLQmlNetworkAccessFactory);
 	myWidget->engine()->addImageProvider(QLatin1String("tree"), new ZLQmlTreeImageProvider);
+
+    myWidget->engine()->addImportPath("/usr/share/zlibrary/declarative");
+
 #if MEEGO_EDITION
 	QFont font;
 	font.setFamily(QLatin1String("Nokia Pure"));

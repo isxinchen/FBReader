@@ -1,13 +1,14 @@
 import QtQuick 2.0
-import Sailfish.Silica 1.0
+import com.syberos.basewidgets 2.0
 import org.fbreader 0.14
 
-Page {
+CPage {
     id: root
 
-    allowedOrientations: Orientation.All
+    //allowedOrientations: Orientation.All
 
-    SilicaFlickable {
+//    SilicaFlickable {
+    Flickable {
         id: flickable
         anchors.fill: parent
 
@@ -22,7 +23,8 @@ Page {
            MouseArea {
                anchors.fill: parent
                onPressed: {
-                   toolbar.hide()
+//                   toolbar.hide()
+                   toolbar.visible = false
                    objectHolder.handlePress(mouse.x, mouse.y)
                }
                onReleased: objectHolder.handleRelease(mouse.x, mouse.y)
@@ -35,28 +37,60 @@ Page {
 //               }
            }
         }
-
-        PullDownMenu {
-            id: mainMenu
-            width: parent.width
-            onActiveChanged: {
-                if ( active ){
-                    applicationInfo.menuBar.recheckItems()
-                }
-            }
+Rectangle{
+    anchors.top: parent.top
+    anchors.topMargin: 100
+    width: parent.width
+    height: 800
+    color: "#000000"
+Column {
+    anchors.fill: parent
+//        PullDownMenu {
+//            id: mainMenu
+//            width: parent.width
+//            onActiveChanged: {
+//                if ( active ){
+//                    applicationInfo.menuBar.recheckItems()
+//                }
+//            }
             Repeater {
                 model: applicationInfo.menuBar !== null ? applicationInfo.menuBar.items : null
-                MenuItem {
-                    parent: mainMenu
+//                MenuItem {
+//                    parent: mainMenu
+//                    text: modelData
+//                    enabled: applicationInfo.menuBar.enabledItems.indexOf(modelData) !== -1
+//                    visible: applicationInfo.menuBar.visibleItems.indexOf(modelData) !== -1
+//                    onClicked: applicationInfo.menuBar.activate(index)
+//                }
+                CLabel {
+                    id: menuItem
+                    property bool down
+                    property bool highlighted
+
+                    signal clicked
+
+                    property int __silica_menuitem
+                    anchors.leftMargin: 20
+//                    parent: mainMenu
                     text: modelData
+                    width: 50
+                    height: 50
                     enabled: applicationInfo.menuBar.enabledItems.indexOf(modelData) !== -1
                     visible: applicationInfo.menuBar.visibleItems.indexOf(modelData) !== -1
                     onClicked: applicationInfo.menuBar.activate(index)
+
+//                    width: parent ? parent.width : Screen.width
+//                    // Reduce height if inside pulley menu content item
+//                    height: parent && parent.hasOwnProperty('__silica_pulleymenu_content') ? Theme.itemSizeExtraSmall : Theme.itemSizeSmall
+//                    horizontalAlignment: Text.AlignHCenter
+//                    verticalAlignment: Text.AlignVCenter
+//                    color: enabled ? (down || highlighted ? Theme.primaryColor : Theme.highlightColor) : Theme.secondaryHighlightColor
                 }
             }
-        }
+//        }
+}
     }
-
+    }
 
     Connections {
         target: applicationInfo
@@ -80,22 +114,31 @@ Page {
     }
 
 
-    DockedPanel {
+//    DockedPanel {
+    Rectangle {
         id: toolbar
 //            width: root.isPortrait ? parent.width : Theme.itemSizeExtraLarge + Theme.paddingLarge
 //            height: root.isPortrait ? Theme.itemSizeExtraLarge + Theme.paddingLarge : parent.height
 //            dock: root.isPortrait ? Dock.Top : Dock.Left
         width: parent.width
-        height: Theme.itemSizeExtraLarge
-        dock: Dock.Bottom
-        open: false
+//        height: Theme.itemSizeExtraLarge
+        height: 100
+        anchors.bottom: parent.bottom
+        color: "#333333"
+//        dock: Dock.Bottom
+//        open: false
         Flow {
             anchors.centerIn: parent
+            spacing: 20
             Repeater {
                 id: repeater
                 model: applicationInfo.actions
-                IconButton {
-                    icon.source: "image://theme/icon-m-" + modelData.platformIconId
+//                IconButton {
+                CButton{
+//                    iconSource: "image://theme/icon-m-" + modelData.platformIconId
+                    text: modelData.platformIconId
+                    width: 50
+                    height: 50
                     visible: modelData.visible
                     enabled: modelData.enabled
                     onClicked: modelData.activate()
@@ -104,7 +147,7 @@ Page {
                         // show toolbar on item enabled changed. (eg as a result of 'Find' action)
 //                        console.log("enabled changed", enabled)
                         if (enabled){
-                            toolbar.show()
+                            toolbar.visible = true
                         }
                     }
     
@@ -119,16 +162,26 @@ Page {
         }
         
         Component.onCompleted: {
-            toolbar.hide()
+//            toolbar.hide()
+            toolbar.visible = false
         }
     }
     // use mousearea to show toolbar or not? mouse area hides progress bar unclickable
-//    MouseArea {
-//        id: toolbarArea
-//        anchors.bottom: parent.bottom
-//        width: parent.width
-//        height: toolbarArea.height
-//        enabled: !toolbar.open
-//        onClicked: toolbar.show()
-//    }
+    MouseArea {
+        id: toolbarArea
+        anchors.bottom: parent.bottom
+        width: parent.width
+        height: toolbarArea.height
+//        enabled: !toolbar.visible
+        onClicked: {
+            toolbar.visible = !toolbar.visible
+        }
+    }
+
+    onStatusChanged: {
+        if(status == CPageStatus.Show){
+            applicationInfo.menuBar.activate(3)
+        }
+    }
+
 }

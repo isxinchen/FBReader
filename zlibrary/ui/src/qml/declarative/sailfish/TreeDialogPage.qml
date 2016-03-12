@@ -18,13 +18,13 @@
  */
 
 import QtQuick 2.0
-import Sailfish.Silica 1.0
+import com.syberos.basewidgets 2.0
 import org.fbreader 0.14
 
-Page {
+CPage {
     id: root
 
-    allowedOrientations: Orientation.All
+    //allowedOrientations: Orientation.All
 
     property variant handler
     property variant rootIndex
@@ -36,29 +36,29 @@ Page {
         id: visualModel
         model: root.handler
         rootIndex: root.rootIndex ? root.rootIndex : visualModel.rootIndex
-        delegate: ListItem {
+        delegate: CEditListViewDelegate {
             id: listItem
-            height: Theme.itemSizeLarge
+            height: 50//Theme.itemSizeLarge
 
             Row {
                 id: row
-                spacing: Theme.paddingLarge
+                spacing: 20//Theme.paddingLarge
                 Image {
                     id: icon
                     source: model.iconSource
                     anchors.verticalCenter: parent.verticalCenter
-                    sourceSize.width: Theme.iconSizeLarge
-                    sourceSize.height: Theme.iconSizeLarge
+                    sourceSize.width: 50//Theme.iconSizeLarge
+                    sourceSize.height: 50//Theme.iconSizeLarge
                 }
                 Column{
                     anchors.verticalCenter: parent.verticalCenter
-                    Label {
+                    CLabel {
                         text: model.title
-                        font.pixelSize: Theme.fontSizeLarge
+                        font.pixelSize: 30//Theme.fontSizeLarge
                     }
-                    Label {
+                    CLabel {
                         text: model.subtitle
-                        font.pixelSize: Theme.fontSizeExtraSmall
+                        font.pixelSize: 30 //Theme.fontSizeExtraSmall
                         color: Theme.secondaryColor
                     }
                 }
@@ -86,18 +86,33 @@ Page {
                     }
                 }
             }
-            onPressAndHold: {
-                console.log("Press-and-hold", model.title)
-                var modelIndex = visualModel.modelIndex(index)
-                var actions = root.handler.actions(modelIndex)
-                console.log("item actions:", actions)
-                if (actions.length > 0){
-                    if (!contextMenu)
-                        contextMenu = contextMenuComponent.createObject(root,
-                                    {"actions": actions, "modelIndex": modelIndex})
-                    contextMenu.show(listItem);
+            onEditingChanged: {
+                if(editing){
+                    console.log("Press-and-hold", model.title)
+                    var modelIndex = visualModel.modelIndex(index)
+                    var actions = root.handler.actions(modelIndex)
+                    console.log("item actions:", actions)
+                    if (actions.length > 0){
+                        if (!contextMenu)
+                            contextMenu = contextMenuComponent.createObject(root,
+                                                                            {"actions": actions, "modelIndex": modelIndex})
+                        contextMenu.show(listItem);
+                    }
                 }
             }
+
+//            onPressAndHold: {
+//                console.log("Press-and-hold", model.title)
+//                var modelIndex = visualModel.modelIndex(index)
+//                var actions = root.handler.actions(modelIndex)
+//                console.log("item actions:", actions)
+//                if (actions.length > 0){
+//                    if (!contextMenu)
+//                        contextMenu = contextMenuComponent.createObject(root,
+//                                    {"actions": actions, "modelIndex": modelIndex})
+//                    contextMenu.show(listItem);
+//                }
+//            }
         }
 
 //        Component.onCompleted: {
@@ -151,47 +166,53 @@ Page {
         }
     }
 
-    SilicaListView {
+//    SilicaListView {
+      CEditListView{
         id: listView
         anchors.fill: parent
-        header: PageHeader { title: "" /*"Library"*/ }
+//        header: PageHeader { title: "" /*"Library"*/ }
         model: visualModel
-        VerticalScrollDecorator {}
-        ViewPlaceholder {
-            enabled: listView.count === 0
-            text: "Empty"
-        }
+//        VerticalScrollDecorator {}
+//        ViewPlaceholder {
+//            enabled: listView.count === 0
+//            text: "Empty"
+//        }
     }
 
     Column {
         visible: fetchingChildren
         anchors.centerIn: parent
-        spacing: Theme.paddingLarge
-        BusyIndicator {
-            id: busyIndicator
-            running: visible
-            anchors.horizontalCenter: parent.horizontalCenter
-            size: BusyIndicatorSize.Large
-        }
-        Label {
+        spacing: 30//Theme.paddingLarge
+//        BusyIndicator {
+//            id: busyIndicator
+//            running: visible
+//            anchors.horizontalCenter: parent.horizontalCenter
+//            size: BusyIndicatorSize.Large
+//        }
+        CLabel {
             id: busyLabel
             anchors.horizontalCenter: parent.horizontalCenter
-            color: Theme.secondaryColor
+            //color: Theme.secondaryColor
         }
     }
 
     Component {
         id: contextMenuComponent
 
-        ContextMenu {
+//        ContextMenu {
+        Rectangle {
             id: menu
+            width: parent.width
+            height: 100
             property variant actions
             property variant modelIndex
             property bool hasChildren: false
 
             Repeater {
                 model: actions
-                MenuItem {
+                CButton {
+                    width: 100
+                    height: 100
                     text: modelData
                     visible: root.handler.isVisibleAction(modelIndex, index)
                     onClicked: root.handler.run(modelIndex, index)
@@ -202,11 +223,11 @@ Page {
 
     Component.onCompleted: {
         if (root.isTreeRoot) {
-            handler.onFinished.connect(function() {
-                console.log("got tree dialog finished signal. closing tree dialog")
-                handler = null // stop onStatusChanged triggering handler.finished() signal
-                popPage()
-            })
+//            handler.onFinished.connect(function() {
+//                console.log("got tree dialog finished signal. closing tree dialog")
+//                handler = null // stop onStatusChanged triggering handler.finished() signal
+//                popPage()
+//            })
         }
     }
 
@@ -218,10 +239,10 @@ Page {
         pageStack.pop(previousPage, PageStackAction.Immediate)
     }
 
-    onStatusChanged: {
-        if (isTreeRoot && status === PageStatus.Inactive && pageStack.depth === 1){
-            if (handler)
-                handler.finish()
-        }
-    }
+//    onStatusChanged: {
+//        if (isTreeRoot && status === PageStatus.Inactive && pageStack.depth === 1){
+//            if (handler)
+//                handler.finish()
+//        }
+//    }
 }
