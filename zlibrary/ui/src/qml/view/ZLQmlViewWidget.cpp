@@ -312,7 +312,7 @@ ZLQmlViewObject::ZLQmlViewObject(ZLApplication *application)
     myWidget->engine()->setNetworkAccessManagerFactory(new ZLQmlNetworkAccessFactory);
 	myWidget->engine()->addImageProvider(QLatin1String("tree"), new ZLQmlTreeImageProvider);
 
-    myWidget->engine()->addImportPath("/usr/share/zlibrary/declarative");
+    myWidget->engine()->addImportPath("/usr/share/zlibrary/declarative/");
 
 #if MEEGO_EDITION
 	QFont font;

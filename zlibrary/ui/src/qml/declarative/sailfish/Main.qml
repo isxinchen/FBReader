@@ -6,7 +6,7 @@ import com.syberos.basewidgets 2.0
 CPageStackWindow {
     id: root
     Component.onCompleted: {
-        gScreenInfo.setStatusBar(false)
+
     }
 
     //allowedOrientations: Orientation.All
@@ -19,41 +19,42 @@ CPageStackWindow {
         target: dialogManager
 
         onDialogRequested: {
-            console.log("onDialogRequested", object)
+            console.log("----------->>>onDialogRequested", object)
             var dialog = pageStack.push("SimpleDialog.qml", {handler : object})
         }
 
         onOptionsDialogRequested: {
-            console.log("onOptionsDialogRequested", object)
+            console.log("----------->>>onOptionsDialogRequested", object)
             var page = pageStack.push("OptionsDialog.qml", { handler: object })
         }
 
         onFileDialogRequested: {
-            console.log("onFileDialogRequested", object)
-            var component = Qt.createComponent("OpenFileDialog.qml");
+            console.log("----------->>>onFileDialogRequested", object)
+            var component = Qt.createComponent(Qt.resolvedUrl("OpenFileDialog.qml"));
             root.openDialog(component.createObject(mainPage, { handler: object }));
         }
 
         onTreeDialogRequested: {
-            console.log("onTreeDialogRequested", object)
-            var page = pageStack.push("TreeDialogPage.qml", { handler: object });
+            console.log("----------->>>onTreeDialogRequested", object)
+//            var page = pageStack.push("TreeDialogPage.qml", { handler: object });
+            gAppUtils.pageStackWindow.pageStack.push(Qt.resolvedUrl("TreeDialogPage.qml"), { handler: object });
         }
 
         onProgressDialogRequested: {
-            console.log("onProgressDialogRequested", object)
+            console.log("----------->>>onProgressDialogRequested", object)
             progressDialog.handler = object
             progressDialog.show()
         }
 
         onQuestionDialogRequested: {
-            console.log("onQuestionDialogRequested", object)
+            console.log("----------->>>onQuestionDialogRequested", object)
             pushWhenPageStackNotBusy("QuestionDialog.qml", { handler: object }, PageStackAction.Immediate)
         }
 
         // following is a special case of QuestionDialog
         onYesNoDialogRequested: {
             var object
-            console.log("onYesNoDialogRequested", object) // object is actually a ZLQmlQuestionDialog
+            console.log("----------->>>onYesNoDialogRequested", object) // object is actually a ZLQmlQuestionDialog
             var args = {
                 title: object.title,
                 text: object.text,
@@ -69,13 +70,13 @@ CPageStackWindow {
 
         onInformationBoxRequested: {
             var title, message, button
-            console.log("onInformationBoxRequested", title, message, button)
+            console.log("----------->>>onInformationBoxRequested", title, message, button)
             var args = { "title": title, "message": message, "acceptText": button }
             pushWhenPageStackNotBusy("MessageDialog.qml", args, PageStackAction.Immediate)
         }
         onErrorBoxRequested: {
             var title, message, button
-            console.log("onErrorBoxRequested", title, message, button)
+            console.log("----------->>>onErrorBoxRequested", title, message, button)
             var args = { "title": title, "message": message, "acceptText": button }
             pushWhenPageStackNotBusy("MessageDialog.qml", args, PageStackAction.Immediate)
         }

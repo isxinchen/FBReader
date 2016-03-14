@@ -18,20 +18,21 @@
  */
 
 import QtQuick 2.0
-import Sailfish.Silica 1.0
+//import Sailfish.Silica 1.0
+import com.syberos.basewidgets 2.0
 import org.fbreader 0.14
 
-Page {
+CPage {
     id: root
 
-    allowedOrientations: Orientation.All
+//    allowedOrientations: Orientation.All
 
     property variant handler
     property variant modelIndex
     property variant imageSource
     property bool hasProgress: false
 
-    SilicaFlickable {
+    Flickable {
         anchors.fill: parent
         contentHeight: contentColumn.height
 
@@ -39,15 +40,15 @@ Page {
             id: contentColumn
             width: parent.width
 
-            PageHeader {
+//            PageHeader {
 //                title: dialogContent.content.title // TODO: a title instead of '??????'
-            }
+//            }
 
             Column {
-                spacing: Theme.paddingMedium
+                spacing: 10//Theme.paddingMedium
                 anchors {
-                    leftMargin: Theme.paddingLarge
-                    rightMargin: Theme.paddingLarge
+//                    leftMargin: Theme.paddingLarge
+//                    rightMargin: Theme.paddingLarge
                     left: parent.left
                     right: parent.right
                 }
@@ -64,6 +65,7 @@ Page {
                 DialogContent {
                     id: dialogContent
                     content: root.handler.createPageContent(root.modelIndex)
+                    width: parent.width
                 }
 
                 Column {
@@ -72,10 +74,14 @@ Page {
                     Repeater {
                         id: repeater
                         model: root.handler.actions(root.modelIndex)
-                        Button {
+                        CButton {
                             anchors.horizontalCenter: parent.horizontalCenter
                             text: modelData
                             onClicked: {
+                                console.log("TreeDialogItemPage: root.handler", root.handler)
+                                console.log("TreeDialogItemPage: button clicked")
+                                console.log("TreeDialogItemPage: root.modelIndex", root.modelIndex, "index", index, "modelData", modelData)
+
                                 root.handler.run(root.modelIndex, index)
                                 buttons.recheckActions()
                             }
@@ -100,12 +106,14 @@ Page {
                 }
             }
             
-            ProgressBar {
+            CProgressBar {
                 id: progressBar
                 width: parent.width
-                label: indeterminate ? "" : value + "%"
-                maximumValue: 100
-                indeterminate: true
+//                label: indeterminate ? "" : value + "%"
+//                maximumValue: 100
+                value: value
+                maximum: 100
+//                indeterminate: true
 //                valueText: indeterminate ? "" : value + "/" + maximumValue
                 visible: root.handler.hasOngoingAction(root.modelIndex)
             }
@@ -120,6 +128,7 @@ Page {
             // only show progressbar if this book node has ongoing action
             // this signal is recieved regardless of the source node
             if (root.handler.hasOngoingAction(root.modelIndex)){
+                console.log("TreeDialogPage:onProgressChanged:", "value", value, "maximumValue", maximumValue)
                 progressBar.indeterminate = maximumValue === -1
                 progressBar.value = Math.round(100 * value / maximumValue)
                 progressBar.visible = true
@@ -127,8 +136,12 @@ Page {
         }
         onProgressFinished: {
             var error
+
+            console.log("TreeDialogPage:onProgressFinished:handler", handler)
+
             if (error !== "") console.log("progress finished with error:", error)
             console.assert(!root.handler.hasOngoingAction(root.modelIndex))
+            console.log("TreeDialogPage:onProgressFinished:handler", handler)
             progressBar.visible = false
             buttons.recheckActions()
         }
@@ -136,6 +149,7 @@ Page {
 
     Component.onCompleted: {
         console.log("TreeDialogItemPage",
+                    "handler", handler,
                    "title", handler.title,
                    "content.title", dialogContent.content.title,
                    "imageSource", imageSource)

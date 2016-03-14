@@ -67,17 +67,24 @@ Column {
                     property bool down
                     property bool highlighted
 
-                    signal clicked
+//                    signal clicked
 
                     property int __silica_menuitem
                     anchors.leftMargin: 20
 //                    parent: mainMenu
                     text: modelData
                     width: 50
-                    height: 50
+                    height: 100
                     enabled: applicationInfo.menuBar.enabledItems.indexOf(modelData) !== -1
                     visible: applicationInfo.menuBar.visibleItems.indexOf(modelData) !== -1
-                    onClicked: applicationInfo.menuBar.activate(index)
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: {
+                            console.log("--------onclicked")
+                            applicationInfo.menuBar.activate(index)
+                        }
+                    }
+
 
 //                    width: parent ? parent.width : Screen.width
 //                    // Reduce height if inside pulley menu content item
@@ -163,7 +170,7 @@ Column {
         
         Component.onCompleted: {
 //            toolbar.hide()
-            toolbar.visible = false
+//            toolbar.visible = false
         }
     }
     // use mousearea to show toolbar or not? mouse area hides progress bar unclickable
@@ -179,9 +186,9 @@ Column {
     }
 
     onStatusChanged: {
-        if(status == CPageStatus.Show){
-            applicationInfo.menuBar.activate(3)
-        }
+//        if(status == CPageStatus.Show){
+//            applicationInfo.menuBar.activate(3)
+//        }
     }
 
 }

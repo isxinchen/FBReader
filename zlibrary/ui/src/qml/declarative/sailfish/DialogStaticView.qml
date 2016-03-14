@@ -18,14 +18,24 @@
  */
 
 import QtQuick 2.0
-import Sailfish.Silica 1.0
+import com.syberos.basewidgets 2.0
 
-Label {
+
+CLabel {
     property variant handler
+
+    Component.onCompleted: {
+        console.log("handler",handler,
+                    "handler.name", handler.name,
+                    "handler.visible", handler.visible,
+                    "handler.enabled", handler.enabled,
+                    "handler.created", handler.created)
+    }
+
     width: parent.width
     visible: handler.visible
     enabled: handler.enabled
     text: handler.name + ": " + handler.text
     wrapMode: Text.WordWrap
-    anchors { leftMargin: Theme.paddingLarge; rightMargin: Theme.paddingLarge }
+//    anchors { leftMargin: Theme.paddingLarge; rightMargin: Theme.paddingLarge }
 }

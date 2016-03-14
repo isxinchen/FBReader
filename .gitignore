@@ -13,7 +13,7 @@ zlibrary/ui/zlui-qt.so
 zlibrary/ui/zlui-qtmobile.so
 fbreader/FBReader
 
-*.pro
+//*.pro
 *.pro.user
 *.dso
 *.lib

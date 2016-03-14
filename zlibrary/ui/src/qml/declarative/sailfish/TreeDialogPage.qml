@@ -31,14 +31,15 @@ CPage {
     property bool isTreeRoot: true
     property Item contextMenu
     property bool fetchingChildren: false
-    
+
     VisualDataModel {
         id: visualModel
         model: root.handler
         rootIndex: root.rootIndex ? root.rootIndex : visualModel.rootIndex
-        delegate: CEditListViewDelegate {
+        delegate: MouseArea {
             id: listItem
-            height: 50//Theme.itemSizeLarge
+            height: 100//Theme.itemSizeLarge
+            width:  parent.width
 
             Row {
                 id: row
@@ -59,7 +60,7 @@ CPage {
                     CLabel {
                         text: model.subtitle
                         font.pixelSize: 30 //Theme.fontSizeExtraSmall
-                        color: Theme.secondaryColor
+                        color: "#444444"//Theme.secondaryColor
                     }
                 }
             }
@@ -80,39 +81,42 @@ CPage {
                             "modelIndex": modelIndex,
                             "imageSource": model.iconSource
                         }
-                        pageStack.push("TreeDialogItemPage.qml", args)
+                        gAppUtils.pageStackWindow.pageStack.push(Qt.resolvedUrl("TreeDialogItemPage.qml"), args)
                     } else {
                         fetchChildren(modelIndex)
                     }
                 }
             }
-            onEditingChanged: {
-                if(editing){
-                    console.log("Press-and-hold", model.title)
-                    var modelIndex = visualModel.modelIndex(index)
-                    var actions = root.handler.actions(modelIndex)
-                    console.log("item actions:", actions)
-                    if (actions.length > 0){
-                        if (!contextMenu)
-                            contextMenu = contextMenuComponent.createObject(root,
-                                                                            {"actions": actions, "modelIndex": modelIndex})
-                        contextMenu.show(listItem);
-                    }
-                }
-            }
 
-//            onPressAndHold: {
-//                console.log("Press-and-hold", model.title)
-//                var modelIndex = visualModel.modelIndex(index)
-//                var actions = root.handler.actions(modelIndex)
-//                console.log("item actions:", actions)
-//                if (actions.length > 0){
-//                    if (!contextMenu)
-//                        contextMenu = contextMenuComponent.createObject(root,
-//                                    {"actions": actions, "modelIndex": modelIndex})
-//                    contextMenu.show(listItem);
+//            onEditingChanged: {
+//                if(editing){
+//                    console.log("Press-and-hold", model.title)
+//                    console.log("index",index)
+//                    var modelIndex = visualModel.modelIndex(index)
+//                    console.log("modelIndex",modelIndex)
+//                    var actions = root.handler.actions(modelIndex)
+//                    console.log("item actions:", actions)
+//                    if (actions.length > 0){
+//                        if (!contextMenu)
+//                            contextMenu = contextMenuComponent.createObject(root,
+//                                                                            {"actions": actions, "modelIndex": modelIndex})
+//                        contextMenu.show(listItem);
+//                    }
 //                }
 //            }
+
+            onPressAndHold: {
+                console.log("Press-and-hold", model.title)
+                var modelIndex = visualModel.modelIndex(index)
+                var actions = root.handler.actions(modelIndex)
+                console.log("item actions:", actions)
+                if (actions.length > 0){
+                    if (!contextMenu)
+                        contextMenu = contextMenuComponent.createObject(root,
+                                    {"actions": actions, "modelIndex": modelIndex})
+                    contextMenu.show(listItem);
+                }
+            }
         }
 
 //        Component.onCompleted: {
@@ -159,7 +163,7 @@ CPage {
                     "isTreeRoot": false
                 }
                 modelIndexToFetch = null
-                var page = pageStack.push("TreeDialogPage.qml", args)
+                var page = gAppUtils.pageStackWindow.pageStack.push(Qt.resolvedUrl("TreeDialogPage.qml"), args)
             } else {
                 console.log(error)
             }
@@ -167,7 +171,7 @@ CPage {
     }
 
 //    SilicaListView {
-      CEditListView{
+      ListView{
         id: listView
         anchors.fill: parent
 //        header: PageHeader { title: "" /*"Library"*/ }
@@ -183,12 +187,12 @@ CPage {
         visible: fetchingChildren
         anchors.centerIn: parent
         spacing: 30//Theme.paddingLarge
-//        BusyIndicator {
-//            id: busyIndicator
-//            running: visible
-//            anchors.horizontalCenter: parent.horizontalCenter
-//            size: BusyIndicatorSize.Large
-//        }
+        CIndicator {
+            id: busyIndicator
+            running: visible
+            anchors.horizontalCenter: parent.horizontalCenter
+            sizeMode: 0
+        }
         CLabel {
             id: busyLabel
             anchors.horizontalCenter: parent.horizontalCenter
@@ -199,11 +203,11 @@ CPage {
     Component {
         id: contextMenuComponent
 
-//        ContextMenu {
-        Rectangle {
+        ContextMenu {
+//        Rectangle {
             id: menu
-            width: parent.width
-            height: 100
+//            width: parent.width
+//            height: 100
             property variant actions
             property variant modelIndex
             property bool hasChildren: false
@@ -222,6 +226,7 @@ CPage {
     }
 
     Component.onCompleted: {
+        console.log("TreeDialogPage:Component completed")
         if (root.isTreeRoot) {
 //            handler.onFinished.connect(function() {
 //                console.log("got tree dialog finished signal. closing tree dialog")

@@ -18,12 +18,12 @@ Rectangle {
         text: handler ? handler.text : ""
     }
     
-//    BusyIndicator {
-//        id: indicator
-//        anchors.centerIn: parent
-//        size: BusyIndicatorSize.Large
-//        running: root.visible
-//    }
+    CIndicator {
+        id: indicator
+        anchors.centerIn: parent
+        sizeMode: 0
+        running: root.visible
+    }
     
 //    Item {
 //        id: dummySpace
@@ -32,10 +32,12 @@ Rectangle {
 //    }
 
     function show() {
+        console.log("ProgressDialog show")
         root.opacity = 1
     }
 
     function hide() {
+        console.log("ProgressDialog hide")
         root.opacity = 0
     }
 

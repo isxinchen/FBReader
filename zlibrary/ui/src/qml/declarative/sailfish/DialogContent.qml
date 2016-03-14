@@ -18,7 +18,7 @@
  */
 
 import QtQuick 2.0
-import Sailfish.Silica 1.0
+import com.syberos.basewidgets 2.0
 import org.fbreader 0.14
 
 Column {
@@ -27,7 +27,7 @@ Column {
     property string imageSource: ""
 
     width: parent.width
-    spacing: Theme.paddingMedium
+    spacing: 20//Theme.paddingMedium
 
     Component.onCompleted: console.log("DialogContent", content.title, content.items)
 
@@ -38,7 +38,7 @@ Column {
         Item {
             id: item
             height: child.height
-            width: parent.width
+//            width: parent.width
             property Item child: createChild(modelData)
             
             function createChild(modelData) {
@@ -54,6 +54,10 @@ Column {
     property variant __componentCache: ({})
 
     function createChild(item, object) {
+        console.log("object",
+                    object,
+                    "object.type",
+                    object.type)
         var componentName;
         switch (object.type) {
         case OptionView.Choice:
